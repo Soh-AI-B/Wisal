@@ -26,6 +26,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/sentences.txt
+    - assets/wisal_logo.png
   fonts:
     - family: Tajawal
       fonts:

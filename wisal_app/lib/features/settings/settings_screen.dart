@@ -252,6 +252,7 @@ class SettingsScreen extends ConsumerWidget {
                 context: context,
                 applicationName: 'Wisal',
                 applicationVersion: '1.0.0',
+                applicationIcon: Image.asset('assets/wisal_logo.png', width: 56, height: 56),
                 children: [
                   Text(tr(ref, "Encourages صلة الرحم by reminding you to call people you haven't talked to in a while.",
                       'يشجّع على صلة الرحم بتذكيرك بالاتصال بمن لم تتحدث معهم منذ فترة.'))

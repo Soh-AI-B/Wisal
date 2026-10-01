@@ -2,6 +2,8 @@
 
 العربية | [English](README.en.md)
 
+![وصال](wisal_app/assets/CoverAR.png)
+
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![Internet](https://img.shields.io/badge/internet%20access-none-success)

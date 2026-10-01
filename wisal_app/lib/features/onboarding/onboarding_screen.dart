@@ -72,11 +72,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final tt = Theme.of(context).textTheme;
     final ar = isArabic(ref);
 
-    Widget page({required IconData icon, required String title, String? body, Widget? extra}) {
+    Widget page({IconData? icon, Widget? leading, required String title, String? body, Widget? extra}) {
       return SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(28, 32, 28, 0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Icon(icon, size: 64, color: kinGold),
+          leading ?? Icon(icon, size: 64, color: kinGold),
           const SizedBox(height: WSpace.lg),
           Text(title, textAlign: TextAlign.center, style: tt.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
           if (body != null) ...[
@@ -91,7 +91,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final pages = <Widget>[
       // 1. Welcome
       page(
-        icon: Icons.volunteer_activism,
+        leading: Image.asset('assets/wisal_logo.png', height: 140),
         title: tr(ref, 'Welcome to Wisal', 'مرحباً بك في وصال'),
         body: tr(
             ref,
