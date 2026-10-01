@@ -1,212 +1,227 @@
-# Wisal (وصال)
+# وصال (Wisal)
+
+العربية | [English](README.en.md)
 
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![Internet](https://img.shields.io/badge/internet%20access-none-success)
 
-**Wisal** ("وصال" — connection) is a local-first, bilingual (Arabic/English)
-Android app that helps you keep صلة الرحم — staying in touch with family and
-loved ones. It reads your phone's own call log to work out who you haven't
-actually spoken to in a while, reminds you on a schedule you control, and
-sends a daily motivational sentence. There is no account, no server, and no
-internet connection involved anywhere in how the app works.
+**وصال** تطبيق أندرويد محلي بالكامل (لا يعتمد على الإنترنت) وثنائي اللغة
+(عربي/إنجليزي)، يساعدك على صلة الرحم — البقاء على تواصل مع عائلتك وأحبائك.
+يقرأ التطبيق سجل مكالماتك الحقيقي في هاتفك ليعرف من لم تتحدث معه فعلياً منذ
+فترة، ويذكرك حسب الجدول الذي تحدده بنفسك، ويرسل لك جملة تحفيزية يومية. لا
+يوجد حساب، ولا خادم، ولا أي اتصال بالإنترنت في طريقة عمل التطبيق.
 
-## Features
+## الميزات
 
-- **Smart reminders** — reads your real call log to find your last answered
-  call with each person (≥10s, so a missed pickup doesn't count), and tells
-  you who's overdue based on a per-list reminder interval you set.
-- **Lists** — group people (family, friends, …) with their own reminder
-  cadence; a "Kin" tier for صلة الرحم-specific lists gets a shorter default
-  and a distinct badge.
-- **Two independent, exact-time notifications** — an overdue-people reminder
-  and a daily صلة الرحم sentence, each with its own on/off switch, cadence
-  (daily / every 2 days / weekly), and exact time of day.
-- **Home-screen widget** — a scrollable list of everyone you're overdue to
-  call, updated in the background, with no need to open the app.
-- **Call direction & notes** — see at a glance whether you called them or
-  they called you last, snooze a reminder, and keep a private note per
-  person.
-- **Reconnect stats** — a weekly/monthly view of how many people you've
-  actually reached out to, and which list you're keeping up with best.
-- **Fully bilingual** — Arabic (default) and English, with complete
-  right-to-left layout support, switchable anytime in Settings.
-- **Guided onboarding** — a first-run walkthrough for permissions,
-  notification setup, and adding the widget, replayable anytime from
-  Settings.
+- **تذكير ذكي** — يقرأ سجل مكالماتك الحقيقي ليعرف آخر مكالمة مجابة فعلياً
+  مع كل شخص (10 ثوانٍ فأكثر، حتى لا تُحتسب مكالمة فائتة أو مرفوضة)، ويخبرك
+  من تأخرت في التواصل معه حسب المدة التي حددتها لكل قائمة.
+- **القوائم** — نظّم الأشخاص في قوائم (العائلة، الأصدقاء...) لكل منها مدة
+  تذكير خاصة بها؛ قائمة "الأرحام" مخصصة لصلة الرحم وتحصل على مدة أقصر
+  افتراضياً وشارة مميزة.
+- **إشعاران مستقلان بوقت دقيق** — تذكير بالأشخاص المتأخرين وجملة صلة الرحم
+  اليومية، لكل منهما مفتاح تشغيل مستقل، وتكرار (يومياً / كل يومين / أسبوعياً)،
+  ووقت دقيق تختاره بنفسك.
+- **ودجت الشاشة الرئيسية** — قائمة قابلة للتمرير بكل من تأخرت في الاتصال بهم،
+  تتحدث في الخلفية دون الحاجة لفتح التطبيق.
+- **اتجاه المكالمة والملاحظات** — اعرف بلمحة هل أنت من اتصل بهم آخر مرة أم
+  هم من اتصلوا بك، أجّل تذكيراً، واحتفظ بملاحظة خاصة لكل شخص.
+- **إحصائيات التواصل** — نظرة أسبوعية/شهرية على عدد الأشخاص الذين تواصلت
+  معهم فعلاً، وأي قائمة تحافظ على التواصل معها بأفضل شكل.
+- **ثنائي اللغة بالكامل** — العربية (اللغة الافتراضية) والإنجليزية، مع دعم
+  كامل للكتابة من اليمين إلى اليسار، قابل للتبديل في أي وقت من الإعدادات.
+- **دليل تعريفي عند أول استخدام** — يشرح خطوة بخطوة الأذونات المطلوبة،
+  إعداد الإشعارات، وإضافة الودجت، ويمكن مراجعته لاحقاً من الإعدادات.
 
-## Why Android only
+## لماذا أندرويد فقط؟
 
-This isn't a resourcing shortcut — the app's entire premise depends on an
-Android-only capability. Wisal works by reading your device's **call log**
-(`android.provider.CallLog`) to find out when you last actually spoke to
-someone. iOS has no equivalent API, public or otherwise: Apple does not let
-any third-party app, even with the user's explicit permission, read the
-device's call history. The closest iOS facility (CallKit) only lets an app
-*supply* caller-ID/blocking data or act as a VoIP dialer — it cannot *read*
-past calls. Without that one capability, the core feature ("who haven't I
-actually called in a while?") can't be built at all, so there's no reduced
-version of this app that would make sense on iPhone.
+هذا ليس اختصاراً في الجهد — جوهر فكرة التطبيق بأكملها يعتمد على قدرة خاصة
+بنظام أندرويد فقط. يعمل وصال عبر قراءة **سجل المكالمات** في جهازك
+(`android.provider.CallLog`) لمعرفة متى تحدثت فعلياً مع شخص ما آخر مرة.
+نظام iOS لا يملك أي واجهة برمجية مكافئة، رسمية أو غير رسمية: شركة Apple لا
+تسمح لأي تطبيق خارجي، حتى بإذن صريح من المستخدم، بقراءة سجل مكالمات الجهاز.
+أقرب ما يوجد في iOS (إطار عمل CallKit) يسمح فقط للتطبيق بـ"تزويد" بيانات
+تعريف المتصل أو حظره، أو العمل كتطبيق اتصال عبر VoIP — لا يمكنه أبداً
+"قراءة" المكالمات السابقة. بدون هذه القدرة تحديداً، لا يمكن بناء الميزة
+الأساسية للتطبيق ("من لم أتصل به فعلياً منذ فترة؟") على الإطلاق، لذا لا
+توجد نسخة مصغّرة منطقية من هذا التطبيق يمكن بناؤها لأجهزة آيفون.
 
-## Privacy & security
+## الخصوصية والأمان
 
-This is the part that matters most, so here it is in full, backed by things
-you can verify yourself in this repository:
+هذا هو الجزء الأهم، لذا نعرضه كاملاً، مدعوماً بأمور يمكنك التحقق منها بنفسك
+في هذا المستودع:
 
-- **No internet connection, period.** The app requests zero network
-  permissions in release builds. (Android *debug* builds get a Flutter
-  tooling-injected `INTERNET` permission purely so `flutter run`'s hot
-  reload can talk to the running app over localhost — this is standard
-  Flutter behavior, not app code, and it is absent from release builds. You
-  can confirm this yourself: build both variants and diff
+- **لا يوجد اتصال بالإنترنت، نقطة.** التطبيق لا يطلب أي إذن شبكة في نسخ
+  الإصدار (release). (نسخ التصحيح (debug) في أندرويد تحصل على إذن
+  `INTERNET` يُضاف تلقائياً من أدوات Flutter نفسها فقط لتمكين إعادة التحميل
+  السريع (hot reload) أثناء التطوير — هذا سلوك قياسي من Flutter، وليس من
+  كود التطبيق، وهو غير موجود في نسخ الإصدار. يمكنك التحقق من هذا بنفسك: ابنِ
+  النسختين وقارن ملفات
   `android/app/build/intermediates/merged_manifest/*/**/AndroidManifest.xml`.)
-- **No analytics, no crash reporting, no third-party SDKs.** Check
-  `pubspec.yaml` and `android/app/build.gradle.kts`: every dependency is a
-  local-functionality library (local database, local notifications,
-  background scheduling, the OS share sheet, URL/dialer launching). None of
-  them talk to a server.
-- **Your data never leaves your phone.** Contacts and call-log data are read
-  directly from Android's own content providers and written only to this
-  app's private, sandboxed SQLite database and `SharedPreferences` — never
-  anywhere else. `android:allowBackup="false"` plus an explicit
-  `data_extraction_rules.xml` excludes the database, shared preferences, and
-  files from *both* Android's cloud backup and its device-to-device transfer
-  — so the data isn't even copied when you back up or switch phones.
-- **Read-only where it counts.** The app never requests `WRITE_CONTACTS` or
-  `WRITE_CALL_LOG` — it cannot modify your contacts or call history even if
-  it wanted to.
-- **No PII in logs.** Diagnostic log lines (tagged `Wisal`, visible only via
-  `adb logcat` on a device you control) record timestamps, counts, and
-  booleans — never a name, number, or note.
-- **Open source, so you don't have to take any of this on faith** — every
-  claim above is something you can grep for yourself.
+- **لا تحليلات، لا تقارير أعطال، لا أي مكتبات خارجية (SDKs).** تحقق من
+  `pubspec.yaml` و `android/app/build.gradle.kts`: كل اعتماديّة هي مكتبة
+  وظيفية محلية بحتة (قاعدة بيانات محلية، إشعارات محلية، جدولة في الخلفية،
+  قائمة مشاركة النظام، فتح الروابط/تطبيق الاتصال). لا شيء منها يتواصل مع
+  أي خادم.
+- **بياناتك لا تغادر هاتفك أبداً.** تُقرأ جهات الاتصال وسجل المكالمات
+  مباشرة من موفري محتوى أندرويد الخاصين بالنظام، وتُكتب فقط في قاعدة بيانات
+  SQLite وإعدادات `SharedPreferences` الخاصة بالتطبيق — ولا مكان آخر أبداً.
+  `android:allowBackup="false"` إضافة إلى ملف `data_extraction_rules.xml`
+  صريح يستثني قاعدة البيانات والإعدادات والملفات من **كل من** النسخ
+  الاحتياطي السحابي لأندرويد **و** نقل البيانات بين الأجهزة — فبياناتك لا
+  تُنسخ حتى عند عمل نسخة احتياطية أو تبديل الهاتف.
+- **قراءة فقط، حيث يهم الأمر.** التطبيق لا يطلب أبداً إذن `WRITE_CONTACTS`
+  أو `WRITE_CALL_LOG` — لا يمكنه تعديل جهات اتصالك أو سجل مكالماتك حتى لو
+  أراد ذلك.
+- **لا بيانات شخصية في السجلات (logs).** أسطر التشخيص (بعلامة `Wisal`،
+  ولا تظهر إلا عبر `adb logcat` على جهاز تملكه) تسجّل فقط الأوقات والأعداد
+  والقيم المنطقية — لا اسماً ولا رقماً ولا ملاحظة أبداً.
+- **مفتوح المصدر، فلا داعي لتصديق أي من هذا الكلام دون تحقق** — كل ما
+  ذُكر أعلاه أمر يمكنك البحث عنه بنفسك في الكود.
 
-### Permissions, and why each one exists
+### الأذونات المطلوبة، ولماذا
 
-| Permission | Why |
+| الإذن | السبب |
 |---|---|
-| `READ_CONTACTS` | To list your contacts when building a list, and to match phone numbers to names. |
-| `READ_CALL_LOG` | To find your last answered call with each person — the core feature. |
-| `POST_NOTIFICATIONS` | To show the two reminder notifications (Android 13+ requires this explicitly). |
-| `SCHEDULE_EXACT_ALARM` | So the notifications fire at the exact time you chose, not "sometime around" it. |
-| `RECEIVE_BOOT_COMPLETED` | To re-arm the notification schedule after a reboot (`AlarmManager` alarms don't survive one). |
-| `WAKE_LOCK`, `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE` | Declared by `androidx.work` (WorkManager), used for the periodic background data refresh. Not requested by app code directly, and none of them grant network access on their own. |
+| `READ_CONTACTS` | لعرض جهات اتصالك عند إنشاء قائمة، ولمطابقة أرقام الهواتف بالأسماء. |
+| `READ_CALL_LOG` | لمعرفة آخر مكالمة مجابة فعلياً مع كل شخص — جوهر الميزة الأساسية. |
+| `POST_NOTIFICATIONS` | لعرض إشعاري التذكير (أندرويد 13+ يتطلب هذا الإذن صراحة). |
+| `SCHEDULE_EXACT_ALARM` | ليصل الإشعار في الوقت الدقيق الذي اخترته، لا "وقتاً تقريبياً". |
+| `RECEIVE_BOOT_COMPLETED` | لإعادة جدولة الإشعارات بعد إعادة تشغيل الهاتف (تنبيهات `AlarmManager` لا تبقى بعد إعادة التشغيل). |
+| `WAKE_LOCK`, `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE` | يعلنها `androidx.work` (مكتبة WorkManager) نفسها، وتُستخدم للتحديث الدوري للبيانات في الخلفية. لا يطلبها كود التطبيق مباشرة، ولا يمنح أي منها وصولاً للإنترنت بحد ذاته. |
 
-## Architecture
+## البنية التقنية (Architecture)
 
-- **Flutter** (`lib/`) — UI, lists, reminder logic, bilingual strings
-  (`core/i18n.dart` — a plain `tr(ref, en, ar)` helper, no ARB/codegen), and
-  a local SQLite database (`core/database/app_database.dart`) for lists,
-  members, settings, and a small reconnect log used for stats.
-- **Kotlin** (`android/app/src/main/kotlin/com/wisal/app/`) — a single
-  `MethodChannel` (`wisal/native`) handles permissions, contacts, call-log
-  reads, and phone-number matching (`Sync.kt`); `AlarmManager`
-  (`Alarms.kt`) schedules the two notifications so they fire at an exact
-  time even without the Flutter engine running; `WorkManager`
-  (`Background.kt`) does a periodic (~6h) data refresh; a `RemoteViewsService`
-  (`ReconnectWidgetService.kt`) backs the scrollable home-screen widget.
-- Flutter mirrors lists/members/settings to native storage after every
-  change (`AppDatabase.pushConfig`); native re-arms its alarms from that
-  same config right after every save, but only when the notification
-  settings actually changed (`Alarms.rescheduleFromConfig`) — so a routine
-  background sync can't accidentally defer an already-armed alarm.
-- صلة الرحم sentences are bundled identically as a Flutter asset
-  (`assets/sentences.txt`) and an Android raw resource
-  (`res/raw/sentences.txt`), so the home-screen card and the day's
-  notification always land on the same sentence (`epochDay % count`).
+- **Flutter** (`lib/`) — الواجهة، القوائم، منطق التذكير، النصوص ثنائية
+  اللغة (`core/i18n.dart` — دالة بسيطة `tr(ref, en, ar)` دون أي أدوات توليد
+  كود)، وقاعدة بيانات SQLite محلية (`core/database/app_database.dart`)
+  للقوائم والأعضاء والإعدادات وسجل صغير للتواصل تُستخدم للإحصائيات.
+- **Kotlin** (`android/app/src/main/kotlin/com/wisal/app/`) — قناة
+  اتصال واحدة (`MethodChannel`) باسم `wisal/native` تتولى الأذونات، جهات
+  الاتصال، قراءة سجل المكالمات، ومطابقة أرقام الهواتف (`Sync.kt`)؛
+  `AlarmManager` (`Alarms.kt`) يجدول الإشعارين ليصلا في وقت دقيق حتى دون
+  تشغيل محرك Flutter؛ `WorkManager` (`Background.kt`) يقوم بتحديث دوري
+  للبيانات (~6 ساعات)؛ و `RemoteViewsService`
+  (`ReconnectWidgetService.kt`) يشغّل ودجت الشاشة الرئيسية القابل للتمرير.
+- يُزامن Flutter القوائم/الأعضاء/الإعدادات إلى التخزين الأصلي (native)
+  بعد كل تغيير (`AppDatabase.pushConfig`)؛ ويعيد الجانب الأصلي جدولة
+  التنبيهات من نفس الإعدادات بعد كل حفظ، لكن فقط عند تغيّر إعدادات
+  الإشعارات فعلياً (`Alarms.rescheduleFromConfig`) — حتى لا تؤدي مزامنة
+  روتينية في الخلفية إلى تأجيل تنبيه مجدول مسبقاً عن طريق الخطأ.
+- جمل صلة الرحم اليومية مضمّنة بشكل متطابق كأصل (asset) في Flutter
+  (`assets/sentences.txt`) ومورد خام (raw resource) في أندرويد
+  (`res/raw/sentences.txt`)، لذا تتطابق دائماً بطاقة الشاشة الرئيسية
+  وإشعار اليوم على نفس الجملة (`epochDay % count`).
 
-### Project structure
+### هيكل المشروع
 
 ```
 wisal_app/
 ├── lib/
-│   ├── core/            # database, models, native bridge, theme, i18n, reminder logic
-│   └── features/        # home, lists, contacts, settings, stats, onboarding — one folder per screen
+│   ├── core/            # قاعدة البيانات، النماذج، الجسر الأصلي، التصميم، الترجمة، منطق التذكير
+│   └── features/        # الرئيسية، القوائم، جهات الاتصال، الإعدادات، الإحصائيات، الدليل التعريفي
 ├── android/app/src/main/
-│   ├── kotlin/com/wisal/app/   # native sync, alarms, widget, notifications
-│   └── res/                    # widget layout/colors, launcher icon, strings (en/ar)
-├── assets/              # bundled fonts (Tajawal, Inter) and the صلة الرحم sentence list
-└── test/                # Dart unit tests
+│   ├── kotlin/com/wisal/app/   # المزامنة الأصلية، التنبيهات، الودجت، الإشعارات
+│   └── res/                    # تخطيط وألوان الودجت، أيقونة التطبيق، النصوص (عربي/إنجليزي)
+├── assets/              # الخطوط المضمّنة (Tajawal، Inter) وقائمة جمل صلة الرحم
+└── test/                # اختبارات Dart
 ```
 
-## Getting started
+## البدء
 
-Requires the [Flutter SDK](https://flutter.dev) and Android SDK/platform
-tools (`sdkmanager`, `adb`) on your `PATH`.
+يتطلب [Flutter SDK](https://flutter.dev) وأدوات Android SDK/platform-tools
+(`sdkmanager`, `adb`) ضمن `PATH`.
 
 ```bash
 cd wisal_app
 flutter pub get
-flutter run                       # debug build on a connected device/emulator
-flutter build apk --release       # release build → build/app/outputs/flutter-apk/app-release.apk
+flutter run                       # نسخة تصحيح على جهاز/محاكي متصل
+flutter build apk --release       # نسخة إصدار ← build/app/outputs/flutter-apk/app-release.apk
 ```
 
-Sideloading is required either way: Google Play restricts `READ_CALL_LOG`
-to an app's *default dialer*, which this isn't, so it can't be distributed
-through the Play Store.
+التثبيت اليدوي (sideloading) مطلوب في كل الحالات: يقيّد Google Play إذن
+`READ_CALL_LOG` على تطبيق الاتصال الافتراضي (default dialer) فقط، وهذا
+التطبيق ليس كذلك، فلا يمكن توزيعه عبر متجر Play.
 
-The release build above is signed with the Flutter debug keystore so it
-builds out of the box — fine for testing on your own device, but **don't
-distribute that APK as-is**. Before sharing a release build publicly,
-[generate your own keystore](https://flutter.dev/to/reference-keystore) and
-point `signingConfig` at it in `android/app/build.gradle.kts`. Never commit
-that keystore or its passwords — `android/.gitignore` already excludes
-`key.properties` and `*.keystore`/`*.jks` for exactly this reason.
+### توقيع نسخ الإصدار (Signing)
 
-Some phones (Xiaomi, Oppo, Samsung, and other aggressive-battery-management
-skins) restrict background work by default — Settings → Battery
-optimization in the app walks you through allowing it, which makes the
-scheduled reminders more reliable.
+يبحث `android/app/build.gradle.kts` عن ملف `android/key.properties`: إن لم
+يكن موجوداً، تُستخدم مفاتيح التصحيح (debug) كبديل (حتى يبني المشروع بنجاح
+لأي شخص يستنسخ المستودع)؛ وإن كان موجوداً، تُوقَّع نسخة الإصدار بالمفتاح
+الحقيقي الذي يشير إليه. لا يُضمَّن أبداً المفتاح (keystore) ولا ملف
+`key.properties` في git — `android/.gitignore` يستثني كليهما.
 
-## Testing
+لإنشاء هوية توقيع خاصة بك:
+
+```bash
+keytool -genkeypair -v -keystore ~/your-release-key.jks \
+  -alias your-alias -keyalg RSA -keysize 4096 -validity 10000
+```
+
+ثم أنشئ ملف `android/key.properties`:
+
+```properties
+storePassword=<كلمة المرور التي حددتها أعلاه>
+keyPassword=<نفس كلمة المرور أو كلمة مرور منفصلة>
+keyAlias=your-alias
+storeFile=/home/you/your-release-key.jks
+```
+
+احتفظ بنسخة احتياطية من ملف المفتاح وكلمة مروره في مكان آمن خارج المستودع
+(مدير كلمات مرور، لا ملف نصي) — يتطلب أندرويد نفس مفتاح التوقيع لكل تحديث
+مستقبلي للتطبيق؛ فقدان أي منهما يعني عدم القدرة على نشر أي تحديث تحت نفس
+هوية التطبيق أبداً.
+
+بعض الهواتف (Xiaomi، Oppo، Samsung، وأنظمة أخرى تدير البطارية بصرامة) تقيّد
+عمل التطبيقات في الخلفية افتراضياً — الإعدادات ← تحسين البطارية داخل
+التطبيق يرشدك للسماح بذلك، مما يجعل التذكيرات المجدولة أكثر موثوقية.
+
+## الاختبارات
 
 ```bash
 cd wisal_app && flutter test                                  # Dart
-cd wisal_app/android && ./gradlew :app:testDebugUnitTest       # Kotlin (phone-number normalization)
+cd wisal_app/android && ./gradlew :app:testDebugUnitTest       # Kotlin (تطبيع أرقام الهواتف)
 ```
 
-## Implementation notes
+## ملاحظات تقنية
 
-- Answered calls = incoming/outgoing with duration ≥ 10s
-  (`MIN_CALL_SECONDS` in `Sync.kt`) — a missed pickup or voicemail bounce
-  doesn't count as a real conversation.
-- The contact picker de-duplicates by normalized phone number
-  (`Contacts.list` in `Sync.kt`): Android doesn't always merge raw contacts
-  from different sources (phone-local storage vs. a Google account) into
-  one aggregate, so a phone-to-phone transfer often leaves the same person
-  as two separate entries with the same number — only the first is shown.
-- Default country code for local numbers is 213 (Algeria) —
-  `PhoneNormalizer` in `Sync.kt`; change `CC` there for a different default.
-- WhatsApp/Telegram calls aren't in the Android call log on virtually any
-  device today, so they can't be included. (Android 16.1 introduces an
-  OS-level unified call log that could someday expose them, but it needs
-  both that OS version and the other app's opt-in — not available in
-  practice yet.)
-- The widget list scrolls (`ReconnectWidgetService`/`RemoteViewsFactory`)
-  and shows every overdue person, not just the first few; names are always
-  rendered left-to-right in it (`textDirection="ltr"`) so Arabic names don't
-  flip to right alignment.
-- Language defaults to Arabic on first install; an in-app toggle (Settings
-  → Language, or the onboarding flow) switches it, independent of the
-  phone's own system language. The one exception is the home-screen
-  launcher label under the app icon, which Android always draws from the
-  *phone's* system locale, not this in-app setting.
-- "Kin" lists only change UI treatment (badge, icon, a shorter prefilled
-  default) — it's not a separate code path, it rides the same per-list
-  reminder-interval the sync already uses.
+- المكالمة المجابة = واردة/صادرة بمدة ≥ 10 ثوانٍ (`MIN_CALL_SECONDS` في
+  `Sync.kt`) — مكالمة فائتة أو ردّ بريد صوتي سريع لا تُحتسب محادثة حقيقية.
+- يزيل منتقي جهات الاتصال التكرار حسب رقم الهاتف بعد تطبيعه (`Contacts.list`
+  في `Sync.kt`): أندرويد لا يدمج دائماً جهات الاتصال الأولية القادمة من
+  مصادر مختلفة (تخزين محلي في الهاتف مقابل حساب Google) في جهة اتصال واحدة
+  مجمّعة، لذا غالباً ما يترك نقل جهات الاتصال بين الهواتف نفس الشخص كجهتي
+  اتصال منفصلتين بنفس الرقم — تُعرض الأولى فقط.
+- رمز الدولة الافتراضي للأرقام المحلية هو 213 (الجزائر) — انظر
+  `PhoneNormalizer` في `Sync.kt`؛ غيّر `CC` هناك لرمز دولة افتراضي مختلف.
+- مكالمات WhatsApp/Telegram غير موجودة في سجل مكالمات أندرويد على أغلب
+  الأجهزة حالياً، فلا يمكن تضمينها. (يقدّم أندرويد 16.1 سجل مكالمات موحّد
+  على مستوى النظام قد يعرضها يوماً ما، لكنه يتطلب كلاً من إصدار النظام هذا
+  وموافقة التطبيق الآخر — غير متاح عملياً بعد.)
+- قائمة الودجت قابلة للتمرير (`ReconnectWidgetService`/`RemoteViewsFactory`)
+  وتعرض كل شخص متأخر، لا الأوائل فقط؛ تُعرض الأسماء دائماً من اليسار إلى
+  اليمين فيها (`textDirection="ltr"`) حتى لا تنقلب محاذاة الأسماء العربية.
+- اللغة الافتراضية عند أول تثبيت هي العربية؛ مفتاح تبديل داخل التطبيق
+  (الإعدادات ← اللغة، أو الدليل التعريفي) يبدّلها، بشكل مستقل عن لغة نظام
+  الهاتف. الاستثناء الوحيد هو اسم التطبيق الظاهر تحت الأيقونة في الشاشة
+  الرئيسية، الذي يرسمه أندرويد دائماً حسب لغة نظام *الهاتف*، لا هذا الإعداد
+  داخل التطبيق.
+- قوائم "الأرحام" تغيّر فقط المظهر (شارة، أيقونة، مدة افتراضية أقصر) — ليست
+  مساراً برمجياً منفصلاً، بل تعتمد على نفس مدة التذكير لكل قائمة التي
+  تستخدمها المزامنة أصلاً.
 
-## Contributing
+## المساهمة
 
-Issues and pull requests are welcome. A few things that keep this
-maintainable:
-- Run `flutter analyze` and `flutter test` before opening a PR — CI-free
-  for now, so this is the only gate.
-- Keep the "no network, no telemetry" property intact — any dependency or
-  change that would add either needs a very good reason and a clear call-out
-  in the PR description.
-- Match the existing bilingual pattern (`tr(ref, 'English', 'العربية')`)
-  for any new user-visible string.
+التبليغ عن المشاكل (Issues) وطلبات السحب (Pull Requests) مرحّب بها. بضعة
+أمور تحافظ على جودة المشروع:
+- شغّل `flutter analyze` و `flutter test` قبل فتح أي طلب سحب — لا يوجد
+  تكامل مستمر (CI) حالياً، فهذا هو الفحص الوحيد.
+- حافظ على خاصية "لا إنترنت، لا تتبع" — أي اعتماديّة أو تغيير قد يضيف أياً
+  منهما يحتاج سبباً وجيهاً جداً وتوضيحاً صريحاً في وصف طلب السحب.
+- اتبع نفس نمط ثنائية اللغة الموجود (`tr(ref, 'English', 'العربية')`) لأي
+  نص جديد ظاهر للمستخدم.
 
-## License
+## الترخيص
 
-GPL-3.0 — see [LICENSE](LICENSE). Copyright © 2026 Soh-AI-B.
+GPL-3.0 — انظر [LICENSE](LICENSE). جميع الحقوق محفوظة © 2026 Soh-AI-B.
