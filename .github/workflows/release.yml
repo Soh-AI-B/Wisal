@@ -1,0 +1,74 @@
+name: Build and publish release APK
+
+# Builds a release APK and attaches it to a GitHub Release whenever a version tag (v1.2.3) is
+# pushed. Runs the real test suite first so a broken build never gets published. Signs with the
+# real keystore if RELEASE_KEYSTORE_BASE64 etc. are set as repo secrets (see README: "Signing
+# release builds"); otherwise falls back to the debug key, same as a local build would.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        working-directory: wisal_app
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: wisal_app
+        run: flutter analyze
+
+      - name: Dart tests
+        working-directory: wisal_app
+        run: flutter test
+
+      - name: Kotlin tests
+        working-directory: wisal_app/android
+        run: ./gradlew :app:testDebugUnitTest
+
+      - name: Decode release keystore (if configured)
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        if: env.RELEASE_KEYSTORE_BASE64 != ''
+        working-directory: wisal_app/android
+        run: |
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > release.jks
+          echo "storePassword=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" > key.properties
+          echo "keyPassword=${{ secrets.RELEASE_KEY_PASSWORD }}" >> key.properties
+          echo "keyAlias=${{ secrets.RELEASE_KEY_ALIAS }}" >> key.properties
+          echo "storeFile=release.jks" >> key.properties
+
+      - name: Build release APK
+        working-directory: wisal_app
+        run: flutter build apk --release
+
+      - name: Rename APK for the release asset
+        run: |
+          mkdir -p dist
+          cp wisal_app/build/app/outputs/flutter-apk/app-release.apk "dist/wisal-${GITHUB_REF_NAME}.apk"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: dist/*.apk
+          generate_release_notes: true

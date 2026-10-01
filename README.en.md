@@ -15,6 +15,9 @@ actually spoken to in a while, reminds you on a schedule you control, and
 sends a daily motivational sentence. There is no account, no server, and no
 internet connection involved anywhere in how the app works.
 
+**[⬇ Download the latest APK](https://github.com/Soh-AI-B/Wisal/releases/latest)**
+— sideload it directly, no Play Store needed (see [Getting started](#getting-started) for why).
+
 ## Features
 
 - **Smart reminders** — reads your real call log to find your last answered
@@ -178,6 +181,28 @@ Back up both the keystore file and its password somewhere safe outside the
 repo (a password manager, not a text file) — Android requires the *same*
 signing key for every future update to an app; losing either one means you
 can never publish an update under that app identity again.
+
+### Releases
+
+Pushing a tag like `v1.0.0` triggers
+[`.github/workflows/release.yml`](.github/workflows/release.yml), which runs
+the full test suite, builds a release APK, and attaches it to a new
+[GitHub Release](https://github.com/Soh-AI-B/Wisal/releases) automatically —
+that's what the download link at the top of this README points to. By
+default it signs with the debug key, same as a local build without
+`key.properties`. To have CI sign with your real keystore instead, add it as
+repo secrets (Settings → Secrets and variables → Actions):
+
+```bash
+base64 -w0 ~/your-release-key.jks   # paste the output as the RELEASE_KEYSTORE_BASE64 secret
+```
+
+| Secret | Value |
+|---|---|
+| `RELEASE_KEYSTORE_BASE64` | base64-encoded keystore file (command above) |
+| `RELEASE_KEYSTORE_PASSWORD` | the store password |
+| `RELEASE_KEY_PASSWORD` | the key password |
+| `RELEASE_KEY_ALIAS` | the key alias |
 
 Some phones (Xiaomi, Oppo, Samsung, and other aggressive-battery-management
 skins) restrict background work by default — Settings → Battery
