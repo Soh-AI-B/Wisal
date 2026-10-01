@@ -1,51 +1,212 @@
 # Wisal (وصال)
 
-Local-first bilingual (English/Arabic) Android app that encourages صلة الرحم:
-lists of people, per-list reminder days, last answered call from your real
-call log, snooze, two independently-scheduled notifications (an overdue-
-people reminder and a daily صلة الرحم sentence), a scrollable home-screen
-widget, a daily quote and reconnect-stats card, and a "kin" list tier. No
-account, no backend.
+![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
+![License](https://img.shields.io/badge/license-GPL--3.0-blue)
+![Internet](https://img.shields.io/badge/internet%20access-none-success)
 
-## Setup
-```
-./setup.sh
-cd reconnect_app && flutter run
-```
-Release APK: `flutter build apk --release` → `build/app/outputs/flutter-apk/app-release.apk`
+**Wisal** ("وصال" — connection) is a local-first, bilingual (Arabic/English)
+Android app that helps you keep صلة الرحم — staying in touch with family and
+loved ones. It reads your phone's own call log to work out who you haven't
+actually spoken to in a while, reminds you on a schedule you control, and
+sends a daily motivational sentence. There is no account, no server, and no
+internet connection involved anywhere in how the app works.
+
+## Features
+
+- **Smart reminders** — reads your real call log to find your last answered
+  call with each person (≥10s, so a missed pickup doesn't count), and tells
+  you who's overdue based on a per-list reminder interval you set.
+- **Lists** — group people (family, friends, …) with their own reminder
+  cadence; a "Kin" tier for صلة الرحم-specific lists gets a shorter default
+  and a distinct badge.
+- **Two independent, exact-time notifications** — an overdue-people reminder
+  and a daily صلة الرحم sentence, each with its own on/off switch, cadence
+  (daily / every 2 days / weekly), and exact time of day.
+- **Home-screen widget** — a scrollable list of everyone you're overdue to
+  call, updated in the background, with no need to open the app.
+- **Call direction & notes** — see at a glance whether you called them or
+  they called you last, snooze a reminder, and keep a private note per
+  person.
+- **Reconnect stats** — a weekly/monthly view of how many people you've
+  actually reached out to, and which list you're keeping up with best.
+- **Fully bilingual** — Arabic (default) and English, with complete
+  right-to-left layout support, switchable anytime in Settings.
+- **Guided onboarding** — a first-run walkthrough for permissions,
+  notification setup, and adding the widget, replayable anytime from
+  Settings.
+
+## Why Android only
+
+This isn't a resourcing shortcut — the app's entire premise depends on an
+Android-only capability. Wisal works by reading your device's **call log**
+(`android.provider.CallLog`) to find out when you last actually spoke to
+someone. iOS has no equivalent API, public or otherwise: Apple does not let
+any third-party app, even with the user's explicit permission, read the
+device's call history. The closest iOS facility (CallKit) only lets an app
+*supply* caller-ID/blocking data or act as a VoIP dialer — it cannot *read*
+past calls. Without that one capability, the core feature ("who haven't I
+actually called in a while?") can't be built at all, so there's no reduced
+version of this app that would make sense on iPhone.
+
+## Privacy & security
+
+This is the part that matters most, so here it is in full, backed by things
+you can verify yourself in this repository:
+
+- **No internet connection, period.** The app requests zero network
+  permissions in release builds. (Android *debug* builds get a Flutter
+  tooling-injected `INTERNET` permission purely so `flutter run`'s hot
+  reload can talk to the running app over localhost — this is standard
+  Flutter behavior, not app code, and it is absent from release builds. You
+  can confirm this yourself: build both variants and diff
+  `android/app/build/intermediates/merged_manifest/*/**/AndroidManifest.xml`.)
+- **No analytics, no crash reporting, no third-party SDKs.** Check
+  `pubspec.yaml` and `android/app/build.gradle.kts`: every dependency is a
+  local-functionality library (local database, local notifications,
+  background scheduling, the OS share sheet, URL/dialer launching). None of
+  them talk to a server.
+- **Your data never leaves your phone.** Contacts and call-log data are read
+  directly from Android's own content providers and written only to this
+  app's private, sandboxed SQLite database and `SharedPreferences` — never
+  anywhere else. `android:allowBackup="false"` plus an explicit
+  `data_extraction_rules.xml` excludes the database, shared preferences, and
+  files from *both* Android's cloud backup and its device-to-device transfer
+  — so the data isn't even copied when you back up or switch phones.
+- **Read-only where it counts.** The app never requests `WRITE_CONTACTS` or
+  `WRITE_CALL_LOG` — it cannot modify your contacts or call history even if
+  it wanted to.
+- **No PII in logs.** Diagnostic log lines (tagged `Wisal`, visible only via
+  `adb logcat` on a device you control) record timestamps, counts, and
+  booleans — never a name, number, or note.
+- **Open source, so you don't have to take any of this on faith** — every
+  claim above is something you can grep for yourself.
+
+### Permissions, and why each one exists
+
+| Permission | Why |
+|---|---|
+| `READ_CONTACTS` | To list your contacts when building a list, and to match phone numbers to names. |
+| `READ_CALL_LOG` | To find your last answered call with each person — the core feature. |
+| `POST_NOTIFICATIONS` | To show the two reminder notifications (Android 13+ requires this explicitly). |
+| `SCHEDULE_EXACT_ALARM` | So the notifications fire at the exact time you chose, not "sometime around" it. |
+| `RECEIVE_BOOT_COMPLETED` | To re-arm the notification schedule after a reboot (`AlarmManager` alarms don't survive one). |
+| `WAKE_LOCK`, `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE` | Declared by `androidx.work` (WorkManager), used for the periodic background data refresh. Not requested by app code directly, and none of them grant network access on their own. |
 
 ## Architecture
-- Flutter (Riverpod + sqflite): UI, lists, snooze, reminder status, language
-  toggle (`core/i18n.dart` — no ARB/codegen, just `tr(ref, en, ar)`).
-- Kotlin, one MethodChannel (`wisal/native`): permissions, contacts, call-log
-  read, number matching, WorkManager (every ~6h, data refresh only),
-  `AlarmManager`-scheduled notifications, widget. Alarms and the worker run
-  without the Flutter engine.
-- Flutter mirrors lists/members/settings to native storage after every change
-  (`AppDatabase.pushConfig`); native re-arms its alarms from that same config
-  right after every save (`Alarms.rescheduleFromConfig`).
-- صلة الرحم sentences (`sentences.md`) are bundled identically as a Flutter
-  asset (`assets/sentences.txt`) and an Android raw resource
-  (`res/raw/sentences.txt`) so the home card and the day's notification
-  always pick the same sentence (`epochDay % count`).
 
-## Tests
-- Dart: `cd reconnect_app && flutter test`
-- Kotlin (phone normalization): `cd reconnect_app/android && ./gradlew :app:testDebugUnitTest`
+- **Flutter** (`lib/`) — UI, lists, reminder logic, bilingual strings
+  (`core/i18n.dart` — a plain `tr(ref, en, ar)` helper, no ARB/codegen), and
+  a local SQLite database (`core/database/app_database.dart`) for lists,
+  members, settings, and a small reconnect log used for stats.
+- **Kotlin** (`android/app/src/main/kotlin/com/wisal/app/`) — a single
+  `MethodChannel` (`wisal/native`) handles permissions, contacts, call-log
+  reads, and phone-number matching (`Sync.kt`); `AlarmManager`
+  (`Alarms.kt`) schedules the two notifications so they fire at an exact
+  time even without the Flutter engine running; `WorkManager`
+  (`Background.kt`) does a periodic (~6h) data refresh; a `RemoteViewsService`
+  (`ReconnectWidgetService.kt`) backs the scrollable home-screen widget.
+- Flutter mirrors lists/members/settings to native storage after every
+  change (`AppDatabase.pushConfig`); native re-arms its alarms from that
+  same config right after every save, but only when the notification
+  settings actually changed (`Alarms.rescheduleFromConfig`) — so a routine
+  background sync can't accidentally defer an already-armed alarm.
+- صلة الرحم sentences are bundled identically as a Flutter asset
+  (`assets/sentences.txt`) and an Android raw resource
+  (`res/raw/sentences.txt`), so the home-screen card and the day's
+  notification always land on the same sentence (`epochDay % count`).
 
-## Notes
-- Android backup is disabled (`allowBackup=false` + extraction rules), so data stays on the device.
-- Sync only overwrites the cache after a successful scan with both Contacts and Call log permissions; otherwise Home shows a permission banner and keeps the cached values.
-- Answered calls = incoming/outgoing with duration ≥ 10s (`MIN_CALL_SECONDS` in `Sync.kt`). Shorter connects (missed pickup, voicemail bounce) don't count as a real conversation.
-- The widget list scrolls (backed by `ReconnectWidgetService`/`RemoteViewsFactory`) and shows every overdue member, not just the first few.
-- Each entry shows who called last: ↙ they called you, ↗ you called them (same in the widget and the Home screen).
-- Contact names are always rendered left-to-right in the widget (`textDirection="ltr"`), so Arabic names don't flip to right alignment.
-- Default country code for local numbers is 213 (Algeria): `PhoneNormalizer` in `Sync.kt`.
-- WhatsApp/Telegram calls are not in the Android call log on virtually any device today, so they can't be included. (Android 16.1 introduces an OS-level unified call log that could someday expose them, but it needs both that OS version and WhatsApp's opt-in — not available in practice yet.)
-- **Notifications** (Settings → Reminder / Daily sentence): each is independently toggleable, with its own time-of-day; the reminder also has a cadence (every day / 2 days / week). Both are scheduled with `AlarmManager` (`Alarms.kt`) so they fire at the exact chosen time — not tied to WorkManager's ~6h data-refresh cycle. On Android 12+, exact scheduling needs the "Exact alarms" permission (Settings screen surfaces this when it's missing); without it, the OS may deliver the notification a little late. A `BootReceiver` re-arms both alarms after a reboot, since `AlarmManager` alarms don't survive one.
-- **Language**: defaults to Arabic on first install; an in-app toggle (Settings → Language, also offered on the first onboarding page) switches it, independent of the phone's system language. The one exception is the home-screen launcher label under the app icon, which Android always draws from the *phone's* system locale (`values-ar/strings.xml`), not this in-app setting.
-- **First-run walkthrough** (`features/onboarding/onboarding_screen.dart`): shown once before the main app, walking through the language choice, the contacts/call-log and notification/exact-alarm permissions, how to set the notification schedule, and how to add the home-screen widget; gated on the `onboardingComplete` setting. Replayable any time from Settings → "How to use Wisal".
-- **Kin lists**: marking a list "Kin (الأرحام)" only changes its UI treatment (badge, icon) and prefills a shorter default reminder threshold for *new* lists — it's not a separate native code path, it rides the same per-list `remindAfterDays` the sync already uses.
-- Some phones (Xiaomi, Oppo, Samsung) restrict background work: Settings → Battery optimization.
-- Installing outside Google Play is required: Play restricts READ_CALL_LOG to default dialer apps.
-- Renaming to Wisal changed the Android package id (`com.wisal.app`), so this is a fresh install — any existing "Reconnect" install's local lists need to be re-added (your actual contacts/call history are untouched; they live in Android's own providers, not this app).
+### Project structure
+
+```
+wisal_app/
+├── lib/
+│   ├── core/            # database, models, native bridge, theme, i18n, reminder logic
+│   └── features/        # home, lists, contacts, settings, stats, onboarding — one folder per screen
+├── android/app/src/main/
+│   ├── kotlin/com/wisal/app/   # native sync, alarms, widget, notifications
+│   └── res/                    # widget layout/colors, launcher icon, strings (en/ar)
+├── assets/              # bundled fonts (Tajawal, Inter) and the صلة الرحم sentence list
+└── test/                # Dart unit tests
+```
+
+## Getting started
+
+Requires the [Flutter SDK](https://flutter.dev) and Android SDK/platform
+tools (`sdkmanager`, `adb`) on your `PATH`.
+
+```bash
+cd wisal_app
+flutter pub get
+flutter run                       # debug build on a connected device/emulator
+flutter build apk --release       # release build → build/app/outputs/flutter-apk/app-release.apk
+```
+
+Sideloading is required either way: Google Play restricts `READ_CALL_LOG`
+to an app's *default dialer*, which this isn't, so it can't be distributed
+through the Play Store.
+
+The release build above is signed with the Flutter debug keystore so it
+builds out of the box — fine for testing on your own device, but **don't
+distribute that APK as-is**. Before sharing a release build publicly,
+[generate your own keystore](https://flutter.dev/to/reference-keystore) and
+point `signingConfig` at it in `android/app/build.gradle.kts`. Never commit
+that keystore or its passwords — `android/.gitignore` already excludes
+`key.properties` and `*.keystore`/`*.jks` for exactly this reason.
+
+Some phones (Xiaomi, Oppo, Samsung, and other aggressive-battery-management
+skins) restrict background work by default — Settings → Battery
+optimization in the app walks you through allowing it, which makes the
+scheduled reminders more reliable.
+
+## Testing
+
+```bash
+cd wisal_app && flutter test                                  # Dart
+cd wisal_app/android && ./gradlew :app:testDebugUnitTest       # Kotlin (phone-number normalization)
+```
+
+## Implementation notes
+
+- Answered calls = incoming/outgoing with duration ≥ 10s
+  (`MIN_CALL_SECONDS` in `Sync.kt`) — a missed pickup or voicemail bounce
+  doesn't count as a real conversation.
+- The contact picker de-duplicates by normalized phone number
+  (`Contacts.list` in `Sync.kt`): Android doesn't always merge raw contacts
+  from different sources (phone-local storage vs. a Google account) into
+  one aggregate, so a phone-to-phone transfer often leaves the same person
+  as two separate entries with the same number — only the first is shown.
+- Default country code for local numbers is 213 (Algeria) —
+  `PhoneNormalizer` in `Sync.kt`; change `CC` there for a different default.
+- WhatsApp/Telegram calls aren't in the Android call log on virtually any
+  device today, so they can't be included. (Android 16.1 introduces an
+  OS-level unified call log that could someday expose them, but it needs
+  both that OS version and the other app's opt-in — not available in
+  practice yet.)
+- The widget list scrolls (`ReconnectWidgetService`/`RemoteViewsFactory`)
+  and shows every overdue person, not just the first few; names are always
+  rendered left-to-right in it (`textDirection="ltr"`) so Arabic names don't
+  flip to right alignment.
+- Language defaults to Arabic on first install; an in-app toggle (Settings
+  → Language, or the onboarding flow) switches it, independent of the
+  phone's own system language. The one exception is the home-screen
+  launcher label under the app icon, which Android always draws from the
+  *phone's* system locale, not this in-app setting.
+- "Kin" lists only change UI treatment (badge, icon, a shorter prefilled
+  default) — it's not a separate code path, it rides the same per-list
+  reminder-interval the sync already uses.
+
+## Contributing
+
+Issues and pull requests are welcome. A few things that keep this
+maintainable:
+- Run `flutter analyze` and `flutter test` before opening a PR — CI-free
+  for now, so this is the only gate.
+- Keep the "no network, no telemetry" property intact — any dependency or
+  change that would add either needs a very good reason and a clear call-out
+  in the PR description.
+- Match the existing bilingual pattern (`tr(ref, 'English', 'العربية')`)
+  for any new user-visible string.
+
+## License
+
+GPL-3.0 — see [LICENSE](LICENSE). Copyright © 2026 Soh-AI-B.
